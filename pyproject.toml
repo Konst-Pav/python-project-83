@@ -4,11 +4,16 @@ version = "0.1.0"
 description = ""
 authors = ["Konstantin Pavlov <k.pavlov.reg@yandex.ru>"]
 readme = "README.md"
-packages = [{include = "hexlet_code"}]
+packages = [{include = "page_analyzer"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
+flask = "^2.3.2"
+gunicorn = "^20.1.0"
 
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "^6.0.0"
 
 [build-system]
 requires = ["poetry-core"]
