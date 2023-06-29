@@ -15,4 +15,4 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return 'Hello, hello!'
+    return render_template('index.html')
