@@ -22,7 +22,7 @@ def index():
 
 @app.post('/urls')
 def post_urls():
-    return redirect(url_for(''))
+    return 'Hello world'
 
 
 @app.route('/urls/<id>')
