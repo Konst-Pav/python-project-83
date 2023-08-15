@@ -2,7 +2,6 @@ from flask import (
     Flask,
     flash,
     get_flashed_messages,
-    make_response,
     redirect,
     render_template,
     request,
@@ -15,9 +14,11 @@ from yaml.loader import SafeLoader
 import page_analyzer.db as db
 from page_analyzer.analyzer import url_check
 from urllib.parse import urlparse
+from dotenv import dotenv_values
 
-cfg = yaml.load(open("config.yml"), Loader=SafeLoader)
-SECRET_KEY = cfg.get('secret_key')
+
+config = dotenv_values('.env')
+SECRET_KEY = config['SECRET_KEY']
 
 
 app = Flask(__name__)

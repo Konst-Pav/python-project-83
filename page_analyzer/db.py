@@ -1,7 +1,5 @@
 import psycopg2
 from datetime import datetime
-import yaml
-from yaml.loader import SafeLoader
 from dotenv import dotenv_values
 
 
@@ -64,7 +62,7 @@ def add_url_check(url_id, status_code=None, h1='', title='', description=''):
         INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at)
         VALUES (%s, %s, %s, %s, %s, %s);
         """, (url_id, status_code, h1, title, description, datetime.now())
-        )
+    )
     conn.commit()
     cur.close()
     conn.close()
@@ -97,7 +95,7 @@ def get_urls():
     conn = psycopg2.connect(CONNECTION_URI)
     cur = conn.cursor()
     cur.execute("""
-        SELECT DISTINCT ON (urls.id) urls.id, urls.name, url_checks.status_code, url_checks.created_at 
+        SELECT DISTINCT ON (urls.id) urls.id, urls.name, url_checks.status_code, url_checks.created_at
         FROM urls LEFT JOIN url_checks ON urls.id = url_checks.url_id
         ORDER BY urls.id, url_checks.created_at DESC;
         """)
