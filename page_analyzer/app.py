@@ -42,17 +42,17 @@ def post_urls():
             return redirect(url_for('index'))
         normalized_url = urlparse(url_from_user)
         name = f"{normalized_url.scheme}://{normalized_url.netloc}"
-        url_already_in_db = db.get_url_by_name(name)
+        url_already_in_db = db.get_data_by_url_name(name)
         if url_already_in_db:
             flash('Страница уже существует', 'alert alert-info')
             return redirect(url_for('get_url', id=url_already_in_db['id']))
         db.add_url(name)
-        url_data = db.get_url_by_name(name)
+        url_data = db.get_data_by_url_name(name)
         flash('Страница успешно добавлена', 'alert alert-success')
         return redirect(url_for('get_url', id=url_data.get('id')))
     else:
         messages = get_flashed_messages(with_categories=True)
-        urls = db.get_urls()
+        urls = db.get_urls_data()
         for url in urls:
             if url.get('created_at'):
                 url['created_at'] = datetime.date(url['created_at'])
@@ -61,9 +61,9 @@ def post_urls():
 
 @app.route('/urls/<int:id>')
 def get_url(id):
-    url_data = db.get_url_by_id(id)
+    url_data = db.get_data_by_url_id(id)
     url_data['created_at'] = datetime.date(url_data.get('created_at', ''))
-    urls_check_list = db.get_all_urls_check_by_id(id)
+    urls_check_list = db.get_url_checks_by_url_id(id)
     for url in urls_check_list:
         url['created_at'] = datetime.date(url.get('created_at', ''))
     messages = get_flashed_messages(with_categories=True)
@@ -72,7 +72,7 @@ def get_url(id):
 
 @app.post('/urls/<int:id>/checks')
 def post_url_check(id):
-    url = db.get_url_by_id(id).get('name')
+    url = db.get_data_by_url_id(id).get('name')
     url_data = url_check(url)
     if url_data:
         status_code = url_data.get('status_code')
