@@ -2,15 +2,15 @@ import psycopg2
 from datetime import datetime
 import yaml
 from yaml.loader import SafeLoader
+from dotenv import dotenv_values
 
 
-cfg = yaml.load(open("config.yml"), Loader=SafeLoader)
-DB_NAME = cfg.get('db_name')
-USER = cfg.get('user')
+config = dotenv_values('.env')
+CONNECTION_URI = config['CONNECTION_URI']
 
 
 def add_url(url):
-    conn = psycopg2.connect(f"dbname={DB_NAME} user={USER}")
+    conn = psycopg2.connect(CONNECTION_URI)
     cur = conn.cursor()
     cur.execute("INSERT INTO urls (name, created_at) VALUES (%s, %s);", (url, datetime.now()))
     conn.commit()
@@ -19,7 +19,7 @@ def add_url(url):
 
 
 def get_url_by_name(url):
-    conn = psycopg2.connect(f"dbname={DB_NAME} user={USER}")
+    conn = psycopg2.connect(CONNECTION_URI)
     cur = conn.cursor()
     cur.execute("SELECT id, name, created_at FROM urls WHERE name = %s LIMIT 1;", (url, ))
     result = cur.fetchone()
@@ -31,7 +31,7 @@ def get_url_by_name(url):
 
 
 def get_url_by_id(id):
-    conn = psycopg2.connect(f"dbname={DB_NAME} user={USER}")
+    conn = psycopg2.connect(CONNECTION_URI)
     cur = conn.cursor()
     cur.execute("SELECT id, name, created_at FROM urls WHERE id = %s;", (id, ))
     result = cur.fetchone()
@@ -43,7 +43,7 @@ def get_url_by_id(id):
 
 
 def get_all_urls():
-    conn = psycopg2.connect(f"dbname={DB_NAME} user={USER}")
+    conn = psycopg2.connect(CONNECTION_URI)
     cur = conn.cursor()
     cur.execute("SELECT id, name, created_at FROM urls;")
     result = cur.fetchall()
@@ -58,7 +58,7 @@ def get_all_urls():
 
 
 def add_url_check(url_id, status_code=None, h1='', title='', description=''):
-    conn = psycopg2.connect(f"dbname={DB_NAME} user={USER}")
+    conn = psycopg2.connect(CONNECTION_URI)
     cur = conn.cursor()
     cur.execute("""
         INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at)
@@ -71,7 +71,7 @@ def add_url_check(url_id, status_code=None, h1='', title='', description=''):
 
 
 def get_all_urls_check_by_id(id):
-    conn = psycopg2.connect(f"dbname={DB_NAME} user={USER}")
+    conn = psycopg2.connect(CONNECTION_URI)
     cur = conn.cursor()
     cur.execute("SELECT id, status_code, h1, title, description, created_at FROM url_checks WHERE url_id = %s;", (id,))
     result = cur.fetchall()
@@ -94,12 +94,12 @@ def get_all_urls_check_by_id(id):
 
 
 def get_urls():
-    conn = psycopg2.connect(f"dbname={DB_NAME} user={USER}")
+    conn = psycopg2.connect(CONNECTION_URI)
     cur = conn.cursor()
     cur.execute("""
-        SELECT DISTINCT ON (urls.name) urls.id, urls.name, url_checks.status_code, url_checks.created_at 
-        FROM urls JOIN url_checks ON urls.id = url_checks.url_id
-        ORDER BY urls.name, url_checks.created_at DESC;
+        SELECT DISTINCT ON (urls.id) urls.id, urls.name, url_checks.status_code, url_checks.created_at 
+        FROM urls LEFT JOIN url_checks ON urls.id = url_checks.url_id
+        ORDER BY urls.id, url_checks.created_at DESC;
         """)
     result = cur.fetchall()
     cur.close()
@@ -107,6 +107,10 @@ def get_urls():
     if result:
         urls_with_checks = []
         for item in result:
-            urls_with_checks.append({'id': item[0], 'name': item[1], 'status_code': item[2], 'created_at': item[3]})
+            id = item[0]
+            name = item[1]
+            status_code = item[2] if item[2] else ''
+            created_at = item[3] if item[3] else ''
+            urls_with_checks.append({'id': id, 'name': name, 'status_code': status_code, 'created_at': created_at})
         return urls_with_checks
     return result

@@ -14,6 +14,7 @@ import yaml
 from yaml.loader import SafeLoader
 import page_analyzer.db as db
 from page_analyzer.analyzer import url_check
+from urllib.parse import urlparse
 
 cfg = yaml.load(open("config.yml"), Loader=SafeLoader)
 SECRET_KEY = cfg.get('secret_key')
@@ -32,25 +33,28 @@ def index():
 @app.route('/urls', methods=['GET', 'POST'])
 def post_urls():
     url_from_user = request.form.get('url', '')
+    url_from_user = url_from_user.lower()
     if request.method == 'POST':
         url_is_valid = validate_url(url_from_user) and len(url_from_user) <= 255
         if not url_is_valid:
             flash('Некорректный URL', 'alert alert-danger')
             return redirect(url_for('index'))
-        url_already_in_db = db.get_url_by_name(url_from_user)
+        normalized_url = urlparse(url_from_user)
+        name = f"{normalized_url.scheme}://{normalized_url.netloc}"
+        url_already_in_db = db.get_url_by_name(name)
         if url_already_in_db:
             flash('Страница уже существует', 'alert alert-info')
             return redirect(url_for('get_url', id=url_already_in_db['id']))
-        url_from_user = url_from_user.lower()
-        db.add_url(url_from_user)
-        url_data = db.get_url_by_name(url_from_user)
+        db.add_url(name)
+        url_data = db.get_url_by_name(name)
         flash('Страница успешно добавлена', 'alert alert-success')
         return redirect(url_for('get_url', id=url_data.get('id')))
     else:
         messages = get_flashed_messages(with_categories=True)
         urls = db.get_urls()
         for url in urls:
-            url['created_at'] = datetime.date(url.get('created_at', ''))
+            if url.get('created_at'):
+                url['created_at'] = datetime.date(url['created_at'])
         return render_template('urls.html', urls=urls, messages=messages)
 
 
