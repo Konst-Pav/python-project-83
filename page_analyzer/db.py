@@ -9,9 +9,10 @@ CONNECTION_URI = config['CONNECTION_URI']
 
 
 def add_url(url):
+    sql_query = "INSERT INTO urls (name, created_at) VALUES (%s, %s);"
     with psycopg2.connect(CONNECTION_URI) as conn:
         with conn.cursor() as curs:
-            curs.execute("INSERT INTO urls (name, created_at) VALUES (%s, %s);", (url, datetime.now()))
+            curs.execute(sql_query, (url, datetime.now()))
 
 
 def get_data_by_url_name(url_name):

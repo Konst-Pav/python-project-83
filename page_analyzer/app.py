@@ -9,8 +9,6 @@ from flask import (
 )
 from validators.url import url as validate_url
 from datetime import datetime
-import yaml
-from yaml.loader import SafeLoader
 import page_analyzer.db as db
 from page_analyzer.analyzer import url_check
 from urllib.parse import urlparse
@@ -31,6 +29,11 @@ def index():
     return render_template('index.html', url='', messages=messages)
 
 
+# @app.get('/urls')
+# def get_urls():
+#
+# @app.post('/urls')
+# def post_urls():
 @app.route('/urls', methods=['GET', 'POST'])
 def post_urls():
     url_from_user = request.form.get('url', '')
@@ -59,6 +62,7 @@ def post_urls():
         return render_template('urls.html', urls=urls, messages=messages)
 
 
+# get_url_page(id)
 @app.route('/urls/<int:id>')
 def get_url(id):
     url_data = db.get_data_by_url_id(id)
@@ -70,6 +74,7 @@ def get_url(id):
     return render_template('url_page.html', messages=messages, url=url_data, urls_check_list=urls_check_list)
 
 
+# post_url_check(id)
 @app.post('/urls/<int:id>/checks')
 def post_url_check(id):
     url = db.get_data_by_url_id(id).get('name')
