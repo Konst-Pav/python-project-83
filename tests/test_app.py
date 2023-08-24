@@ -59,7 +59,8 @@ def test_add_url_check(url_id, status_code, h1, title, description):
         with conn.cursor(cursor_factory=RealDictCursor) as curs:
             curs.execute("""
             SELECT url_id, status_code, h1, title, description 
-            FROM url_checks;
+            FROM url_checks
+            WHERE url_id = %s;
             """, (url_id, ))
             result = curs.fetchone()
             expected_result = {
@@ -69,8 +70,5 @@ def test_add_url_check(url_id, status_code, h1, title, description):
                 'title': title,
                 'description': description
             }
-            curs.execute("""
-                        DELETE FROM url_checks
-                        WHERE url_id = %s AND status_code = %s AND h1 = %s AND title = %s AND description = %s;
-                        """, (url_id, status_code, h1, title, description))
+            curs.execute("DELETE FROM url_checks WHERE url_id = %s;", (url_id, ))
             assert result == expected_result
