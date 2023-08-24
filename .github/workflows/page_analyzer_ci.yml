@@ -17,6 +17,6 @@
         - name: Run linter
           run: make lint
         - name: Create env file
-          run: echo "${{ secrets.CONNECTION_URI }}\n${{ secrets.SECRET_KEY }}" > .env
+          run: echo "${{ secrets.SECRETS }}" > .env
         - name: Run pytest
           run: make pytest
