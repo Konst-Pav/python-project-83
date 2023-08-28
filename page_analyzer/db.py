@@ -5,18 +5,18 @@ from dotenv import dotenv_values
 
 
 config = dotenv_values('.env')
-CONNECTION_URI = config['CONNECTION_URI']
+DATABASE_URL = config['DATABASE_URL']
 
 
 def add_url(url):
     sql_query = "INSERT INTO urls (name, created_at) VALUES (%s, %s);"
-    with psycopg2.connect(CONNECTION_URI) as conn:
+    with psycopg2.connect(DATABASE_URL) as conn:
         with conn.cursor() as curs:
             curs.execute(sql_query, (url, datetime.now()))
 
 
 def get_data_by_url_name(url_name):
-    with psycopg2.connect(CONNECTION_URI) as conn:
+    with psycopg2.connect(DATABASE_URL) as conn:
         with conn.cursor(cursor_factory=DictCursor) as curs:
             curs.execute("SELECT id, name, created_at FROM urls WHERE name = %s LIMIT 1;", (url_name,))
             result = curs.fetchone()
@@ -24,7 +24,7 @@ def get_data_by_url_name(url_name):
 
 
 def get_data_by_url_id(url_id):
-    with psycopg2.connect(CONNECTION_URI) as conn:
+    with psycopg2.connect(DATABASE_URL) as conn:
         with conn.cursor(cursor_factory=DictCursor) as curs:
             curs.execute("SELECT id, name, created_at FROM urls WHERE id = %s;", (url_id,))
             result = curs.fetchone()
@@ -32,7 +32,7 @@ def get_data_by_url_id(url_id):
 
 
 def get_all_urls_data():
-    with psycopg2.connect(CONNECTION_URI) as conn:
+    with psycopg2.connect(DATABASE_URL) as conn:
         with conn.cursor(cursor_factory=DictCursor) as curs:
             curs.execute("SELECT id, name, created_at FROM urls;")
             result = curs.fetchall()
@@ -40,7 +40,7 @@ def get_all_urls_data():
 
 
 def add_url_check(url_id, status_code=None, h1='', title='', description=''):
-    with psycopg2.connect(CONNECTION_URI) as conn:
+    with psycopg2.connect(DATABASE_URL) as conn:
         with conn.cursor() as curs:
             curs.execute("""
                 INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at)
@@ -49,7 +49,7 @@ def add_url_check(url_id, status_code=None, h1='', title='', description=''):
 
 
 def get_url_checks_by_url_id(url_id):
-    with psycopg2.connect(CONNECTION_URI) as conn:
+    with psycopg2.connect(DATABASE_URL) as conn:
         with conn.cursor(cursor_factory=DictCursor) as curs:
             curs.execute("""
                 SELECT id, status_code, h1, title, description, created_at FROM url_checks WHERE url_id = %s;
@@ -59,7 +59,7 @@ def get_url_checks_by_url_id(url_id):
 
 
 def get_urls_data():
-    with psycopg2.connect(CONNECTION_URI) as conn:
+    with psycopg2.connect(DATABASE_URL) as conn:
         with conn.cursor(cursor_factory=DictCursor) as curs:
             curs.execute("""
                 SELECT DISTINCT ON (urls.id)
