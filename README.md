@@ -1,4 +1,4 @@
-# Анализатор страниц — приложение на базе фреймворка Flask.
+# Анализатор страниц — приложение на базе фреймворка Flask
 ### https://page-analyzer-6yh6.onrender.com/
 ![img.png](page_analyzer_screenshot.png)
 ___
