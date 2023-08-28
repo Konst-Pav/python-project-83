@@ -36,7 +36,7 @@ def test_get_data_by_url_name(url_name):
 
 
 @pytest.mark.parametrize('url_name', [
-    'https://test'
+    'https://test2'
 ])
 def test_get_data_by_url_id(url_name):
     with psycopg2.connect(DATABASE_URL) as conn:
