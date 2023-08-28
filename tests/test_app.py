@@ -6,7 +6,7 @@ from dotenv import dotenv_values
 
 
 config = dotenv_values('.env')
-CONNECTION_URI = config['CONNECTION_URI']
+DATABASE_URL = config['DATABASE_URL']
 
 
 @pytest.mark.parametrize('url, expected_result', [
@@ -14,7 +14,7 @@ CONNECTION_URI = config['CONNECTION_URI']
 ])
 def test_add_url(url, expected_result):
     db.add_url(url)
-    with psycopg2.connect(CONNECTION_URI) as conn:
+    with psycopg2.connect(DATABASE_URL) as conn:
         with conn.cursor(cursor_factory=DictCursor) as curs:
             curs.execute("SELECT name FROM urls WHERE name = %s LIMIT 1;", (url,))
             result = curs.fetchone()
@@ -26,7 +26,7 @@ def test_add_url(url, expected_result):
     'https://test'
 ])
 def test_get_data_by_url_name(url_name):
-    with psycopg2.connect(CONNECTION_URI) as conn:
+    with psycopg2.connect(DATABASE_URL) as conn:
         with conn.cursor(cursor_factory=DictCursor) as curs:
             curs.execute("INSERT INTO urls (name) VALUES (%s);", (url_name, ))
             conn.commit()
@@ -39,7 +39,7 @@ def test_get_data_by_url_name(url_name):
     'https://test'
 ])
 def test_get_data_by_url_id(url_name):
-    with psycopg2.connect(CONNECTION_URI) as conn:
+    with psycopg2.connect(DATABASE_URL) as conn:
         with conn.cursor(cursor_factory=DictCursor) as curs:
             curs.execute("INSERT INTO urls (name) VALUES (%s);", (url_name, ))
             conn.commit()
@@ -55,7 +55,7 @@ def test_get_data_by_url_id(url_name):
 ])
 def test_add_url_check(url_id, status_code, h1, title, description):
     db.add_url_check(url_id, status_code=status_code, h1=h1, title=title, description=description)
-    with psycopg2.connect(CONNECTION_URI) as conn:
+    with psycopg2.connect(DATABASE_URL) as conn:
         with conn.cursor(cursor_factory=RealDictCursor) as curs:
             curs.execute("""
             SELECT url_id, status_code, h1, title, description 
