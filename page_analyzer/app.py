@@ -93,4 +93,4 @@ def post_url_check(id):
         flash('Страница успешно проверена', 'alert alert-success')
         return redirect(url_for('get_url', id=id))
     flash('Произошла ошибка при проверке', 'alert alert-danger')
-    return redirect(url_for('get_url', id=id)), 417
+    return redirect(url_for('get_url', id=id))
