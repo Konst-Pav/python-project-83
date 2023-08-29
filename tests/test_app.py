@@ -3,13 +3,10 @@ import psycopg2
 from psycopg2.extras import DictCursor, RealDictCursor
 import page_analyzer.db as db
 from dotenv import load_dotenv
-from dotenv import dotenv_values
 import os
 
 
 load_dotenv()
-# config = dotenv_values('.env')
-# DATABASE_URL = config['DATABASE_URL']
 DATABASE_URL = os.getenv('DATABASE_URL')
 
 
