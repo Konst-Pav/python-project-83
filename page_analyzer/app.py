@@ -13,8 +13,10 @@ import page_analyzer.db as db
 from page_analyzer.analyzer import url_check
 from urllib.parse import urlparse
 from dotenv import dotenv_values
+from dotenv import load_dotenv
 
 
+load_dotenv()
 config = dotenv_values('.env')
 SECRET_KEY = config['SECRET_KEY']
 

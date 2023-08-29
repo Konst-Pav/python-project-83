@@ -2,8 +2,10 @@ import psycopg2
 from psycopg2.extras import DictCursor
 from datetime import datetime
 from dotenv import dotenv_values
+from dotenv import load_dotenv
 
 
+load_dotenv()
 config = dotenv_values('.env')
 DATABASE_URL = config['DATABASE_URL']
 

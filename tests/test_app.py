@@ -3,8 +3,10 @@ import psycopg2
 from psycopg2.extras import DictCursor, RealDictCursor
 import page_analyzer.db as db
 from dotenv import dotenv_values
+from dotenv import load_dotenv
 
 
+load_dotenv()
 config = dotenv_values('.env')
 DATABASE_URL = config['DATABASE_URL']
 # Test
@@ -47,8 +49,8 @@ def test_get_data_by_url_id(url_name):
             curs.execute("SELECT id FROM urls WHERE name = %s;", (url_name, ))
             url_data = curs.fetchone()
             result = db.get_data_by_url_id(url_data['id'])
-            assert result['name'] == url_name
             curs.execute("DELETE FROM urls WHERE id = %s", (url_data['id'], ))
+            assert result['name'] == url_name
 
 
 @pytest.mark.parametrize('url_id, status_code, h1, title, description', [
