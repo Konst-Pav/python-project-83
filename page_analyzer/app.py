@@ -46,7 +46,8 @@ def post_urls():
         url_is_valid = validate_url(url_from_user) and len(url_from_user) <= 255
         if not url_is_valid:
             flash('Некорректный URL', 'alert alert-danger')
-            return redirect(url_for('index'))
+            messages = get_flashed_messages(with_categories=True)
+            return render_template('index.html', url=url_from_user, messages=messages)
         normalized_url = urlparse(url_from_user)
         name = f"{normalized_url.scheme}://{normalized_url.netloc}"
         url_already_in_db = db.get_data_by_url_name(name)
