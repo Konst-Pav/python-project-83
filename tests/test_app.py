@@ -59,7 +59,7 @@ def test_add_url_check(url_id, status_code, h1, title, description):
     with psycopg2.connect(DATABASE_URL) as conn:
         with conn.cursor(cursor_factory=RealDictCursor) as curs:
             curs.execute("""
-            SELECT url_id, status_code, h1, title, description 
+            SELECT url_id, status_code, h1, title, description
             FROM url_checks
             WHERE url_id = %s;
             """, (url_id, ))
