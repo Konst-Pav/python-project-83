@@ -62,6 +62,8 @@ def urls():
 @app.route('/urls/<int:id>')
 def get_url_page(id):
     url_data = db.get_data_by_url_id(id)
+    if not url_data:
+        return render_template('error/404.html'), 404
     url_data['created_at'] = datetime.date(url_data.get('created_at', ''))
     urls_check_list = db.get_url_checks_by_url_id(id)
     for url in urls_check_list:
@@ -84,3 +86,13 @@ def post_url_check(id):
         return redirect(url_for('get_url_page', id=id))
     flash('Произошла ошибка при проверке', 'alert alert-danger')
     return redirect(url_for('get_url_page', id=id))
+
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template('error/404.html'), 404
+
+
+@app.errorhandler(500)
+def server_error(error):
+    return render_template('error/500.html'), 500
