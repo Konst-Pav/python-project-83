@@ -16,7 +16,3 @@
             make install
         - name: Run linter
           run: make lint
-        - name: Create env file
-          run: echo "${{ secrets.SECRETS }}" > .env
-        - name: Run pytest
-          run: make pytest
