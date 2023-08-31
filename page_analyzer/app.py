@@ -7,12 +7,12 @@ from flask import (
     request,
     url_for,
 )
-from validators.url import url as validate_url
 from datetime import datetime
 import page_analyzer.db as db
 from page_analyzer.analyzer import url_check
 from urllib.parse import urlparse
 from dotenv import load_dotenv
+from page_analyzer.validator import validate_url
 import os
 
 
@@ -35,7 +35,7 @@ def urls():
     url_from_user = request.form.get('url', '')
     url_from_user = url_from_user.lower()
     if request.method == 'POST':
-        url_is_valid = validate_url(url_from_user) and len(url_from_user) <= 255
+        url_is_valid = validate_url(url_from_user)
         if not url_is_valid:
             flash('Некорректный URL', 'alert alert-danger')
             messages = get_flashed_messages(with_categories=True)
