@@ -4,10 +4,8 @@ from bs4 import BeautifulSoup
 
 
 def url_check(url):
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-    except RequestException:
+    response = get_response_from(url)
+    if not response:
         return None
     status_code = response.status_code
     parsed_response = BeautifulSoup(response.text, 'html.parser')
@@ -17,3 +15,12 @@ def url_check(url):
     description = tag_with_description['content'] if tag_with_description else ''
     result = {'url': url, 'status_code': status_code, 'h1': h1, 'title': title, 'description': description}
     return result
+
+
+def get_response_from(url):
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+    except RequestException:
+        return None
+    return response
